@@ -1,0 +1,2 @@
+MainPackage=C:\Users\Keoz\Downloads\samples-develop\samples-develop\TempSensor\CS\bin\ARM\Debug\TempSensor_1.0.1.0_ARM_Debug.appx
+SymbolPackage=C:\Users\Keoz\Downloads\samples-develop\samples-develop\TempSensor\CS\AppPackages\TempSensor_1.0.1.0_Debug_Test\TempSensor_1.0.1.0_ARM_Debug.appxsym
