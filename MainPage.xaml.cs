@@ -17,9 +17,14 @@ using Windows.UI.Xaml.Navigation;
 using Windows.Devices.Spi;
 using Windows.Devices.Gpio;
 using Windows.Devices.Enumeration;
-
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.Azure.Devices.Client;
+using Newtonsoft.Json;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
+// I modified the original template to match the requirements of this demo project
 
 namespace TempSensor
 {
@@ -45,6 +50,11 @@ namespace TempSensor
             timer.Tick += Timer_Tick;
             timer.Start();
 
+            sendDataTimer = new DispatcherTimer();
+            sendDataTimer.Interval = TimeSpan.FromMinutes(10);
+            sendDataTimer.Tick += SendDataTimer_Tick;
+            sendDataTimer.Start();
+
             whichADCChip = ADCChip.mcp3202;
             switch (whichADCChip)
             {
@@ -69,6 +79,8 @@ namespace TempSensor
                         writeBuffer = new byte[2] { 0x68, 0x00 };
                     }
                     break;
+                    // I created this configuration myself using the chip datasheet, so it might not be accurate
+                    // Please feel free to share with me any improvement you might find
                 case ADCChip.mcp3202:
                     {
                         /* mcp3208 is 12 bits output */
@@ -145,6 +157,8 @@ namespace TempSensor
             InitSPI();
         }
 
+
+
         private async void InitSPI()
         {
             try
@@ -164,6 +178,11 @@ namespace TempSensor
                 throw new Exception("SPI Initialization Failed", ex);
             }
         }
+
+        private async void SendDataTimer_Tick(object sender, object e)
+        {
+            await SendDataToAzure();
+        }
         private void Timer_Tick(object sender, object e)
         {
             DisplayTextBoxContents();
@@ -181,11 +200,11 @@ namespace TempSensor
             //Temp_in_C = (voltage - 0.5) / 0.01
 
             var voltage = ((double)res / 4096) * 5.0;
-            var tempInC = (voltage - 0.5) / 0.01;
+            tempInC = (voltage - 0.5) / 0.01;
 
 
-            textPlaceHolder.Text = String.Format("{0:##.#} °C", tempInC.ToString());
-
+            textPlaceHolder.Text = String.Format("{0} °C", tempInC.ToString("##.#"));
+            Debug.WriteLine(textPlaceHolder.Text);
         }
         public int convertToInt(byte[] data)
         {
@@ -243,7 +262,42 @@ namespace TempSensor
 
         // create a timer
         private DispatcherTimer timer;
+        private DispatcherTimer sendDataTimer;
         int res;
+        double tempInC;
+
+        string connStr = "{connection string with shared key for device}"; 
+        /// <summary>
+        /// Sends data to Azure IoT Hub to later be an input for Stream Analytics
+        /// </summary>
+        /// <returns></returns>
+        private async Task SendDataToAzure()
+        {
+            DeviceClient deviceClient = DeviceClient.CreateFromConnectionString(connStr, TransportType.Http1);
+
+            var telemetryDataPoint = new
+            {
+                DeviceId = "KeozPi",
+                Temp = tempInC.ToString("##.#"),
+                CreatedAt = DateTimeOffset.UtcNow
+            };
+            var messageString = JsonConvert.SerializeObject(telemetryDataPoint);
+            var message = new Message(Encoding.ASCII.GetBytes(messageString));
+
+            try {
+                await deviceClient.SendEventAsync(message);
+                Debug.WriteLine(String.Concat("sent message: ", messageString));
+
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(String.Concat("error: ", ex.Message));
+
+            }
+
+        }
+
 
     }
+
 }
