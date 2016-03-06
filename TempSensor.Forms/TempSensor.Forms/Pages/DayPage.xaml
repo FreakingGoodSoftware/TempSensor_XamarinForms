@@ -1,0 +1,51 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:chart="clr-namespace:Syncfusion.SfChart.XForms;assembly=Syncfusion.SfChart.XForms"
+             xmlns:vm="clr-namespace:TempSensor.Forms.ViewModels;assembly=TempSensor.Forms"
+             x:Class="TempSensor.Forms.DayPage" Title="Day" >
+
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                    iOS="0, 20, 0, 0" />
+  </ContentPage.Padding>
+  <ContentPage.ToolbarItems>
+    <ToolbarItem Text="Filter" Command="{Binding FilterCommand}"></ToolbarItem>
+  </ContentPage.ToolbarItems>
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition />
+    </Grid.RowDefinitions>
+    <Label Text="This day" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="70"/>
+    <Label Text="{Binding TempNow}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="70"/>
+
+    <chart:SfChart x:Name="Chart" Grid.Row="1">
+      <chart:SfChart.PrimaryAxis>
+        <chart:CategoryAxis LabelRotationAngle="-45">
+          <chart:CategoryAxis.Title>
+            <chart:ChartAxisTitle Text="Hour"/>
+          </chart:CategoryAxis.Title>
+        </chart:CategoryAxis>
+      </chart:SfChart.PrimaryAxis>
+      <chart:SfChart.SecondaryAxis>
+        <chart:NumericalAxis>
+          <chart:NumericalAxis.Title>
+            <chart:ChartAxisTitle Text="°C"/>
+          </chart:NumericalAxis.Title>
+        </chart:NumericalAxis>
+      </chart:SfChart.SecondaryAxis>
+
+      <chart:SfChart.Series>
+        <chart:StackingColumnSeries
+          Label="Temp"
+          Color="#FF8D00"
+          DataMarkerPosition="Center">
+          
+        </chart:StackingColumnSeries>
+      </chart:SfChart.Series>
+
+    </chart:SfChart>
+    </Grid>
+</ContentPage>
