@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Table;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -7,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using TempSensor.Forms.Models;
 using TempSensor.Forms.Pages;
 using Xamarin.Forms;
 
@@ -19,6 +22,7 @@ namespace TempSensor.Forms.ViewModels
         string tempNow;
         string tempText;
         HttpClient client;
+       
 
         public DayPageViewModel(INavigation navigation)
         {
@@ -29,9 +33,17 @@ namespace TempSensor.Forms.ViewModels
             client = new HttpClient(new ModernHttpClient.NativeMessageHandler());
         }
 
-        public void ShowTimeTemp()
+        public async void ShowTimeTemp()
         {
-            TempText = String.Format("Temperature at {0}", SelectedTime.ToString(@"hh\:mm"));
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("");
+            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
+            CloudTable table = tableClient.GetTableReference("TempHistory");
+            TableQuery<HistoryEntity> query = new TableQuery<HistoryEntity>();
+            var result = await table.ExecuteAsync(TableOperation.Retrieve<HistoryEntity>("", ""));
+            foreach (HistoryEntity entity in result.Result)
+            {
+            }
+                TempText = String.Format("Temperature at {0}", SelectedTime.ToString(@"hh\:mm"));
         }
 
         public void ShowAverage()
