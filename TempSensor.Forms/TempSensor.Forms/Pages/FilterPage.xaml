@@ -5,5 +5,8 @@
   <StackLayout>
     <Label Text="Select a time to show:" VerticalOptions="Center" HorizontalOptions="Center" />
     <TimePicker Grid.Row="1" Time="{Binding SelectedTime, Mode=TwoWay}" />
+    <Button Text="Choose time" Clicked="OnTimeClick"></Button>
+    <Button Text="Average time"  Clicked="OnAverageClick"></Button>
+
   </StackLayout>
 </ContentPage>

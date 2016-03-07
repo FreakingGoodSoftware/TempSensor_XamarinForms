@@ -17,19 +17,26 @@ namespace TempSensor.Forms.ViewModels
         public INavigation Navigation { get; set; }
         TimeSpan selectedTime;
         string tempNow;
+        string tempText;
         HttpClient client;
 
         public DayPageViewModel(INavigation navigation)
         {
             Navigation = navigation;
+            ShowAverage();
             FilterCommand = new Command(execute: ShowFilter);
             SelectedTime = DateTime.Now.TimeOfDay;
             client = new HttpClient(new ModernHttpClient.NativeMessageHandler());
         }
 
-        void ShowTemp()
+        public void ShowTimeTemp()
         {
-            // Call service
+            TempText = String.Format("Temperature at {0}", SelectedTime.ToString(@"hh\:mm"));
+        }
+
+        public void ShowAverage()
+        {
+            TempText = "Average today";
         }
 
         public void ShowFilter()
@@ -63,6 +70,19 @@ namespace TempSensor.Forms.ViewModels
             set
             {
                 SetProperty(ref tempNow, value);
+            }
+        }
+
+        public string TempText
+        {
+            get
+            {
+                return tempText;
+            }
+
+            set
+            {
+                SetProperty(ref tempText, value);
             }
         }
     }

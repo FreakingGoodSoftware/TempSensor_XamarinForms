@@ -127,6 +127,12 @@
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TempSensor.Forms\TempSensor.Forms.csproj">
+      <Project>{e7a2da02-36d0-4ffd-a95e-564d244b5da1}</Project>
+      <Name>TempSensor.Forms</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
   </PropertyGroup>

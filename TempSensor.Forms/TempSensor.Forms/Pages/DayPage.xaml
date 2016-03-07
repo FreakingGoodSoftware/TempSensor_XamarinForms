@@ -10,18 +10,20 @@
                     iOS="0, 20, 0, 0" />
   </ContentPage.Padding>
   <ContentPage.ToolbarItems>
-    <ToolbarItem Text="Filter" Command="{Binding FilterCommand}"></ToolbarItem>
+    <ToolbarItem Text="Time filter" Command="{Binding FilterCommand}"></ToolbarItem>
   </ContentPage.ToolbarItems>
-  <Grid>
+  <Grid Padding="0,10,0,0">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition />
     </Grid.RowDefinitions>
-    <Label Text="This day" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="70"/>
-    <Label Text="{Binding TempNow}" VerticalOptions="Center" HorizontalOptions="Center" HeightRequest="70"/>
-
-    <chart:SfChart x:Name="Chart" Grid.Row="1">
+    <Label Text="This day" VerticalOptions="Center" HorizontalOptions="Center" FontSize="22"/>
+    <StackLayout Grid.Row="1" Padding="5">
+      <Label Text="{Binding TempText}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="15"/>
+      <Label Text="{Binding TempNow}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="18"/>
+    </StackLayout>
+    <chart:SfChart x:Name="Chart" Grid.Row="2">
       <chart:SfChart.PrimaryAxis>
         <chart:CategoryAxis LabelRotationAngle="-45">
           <chart:CategoryAxis.Title>

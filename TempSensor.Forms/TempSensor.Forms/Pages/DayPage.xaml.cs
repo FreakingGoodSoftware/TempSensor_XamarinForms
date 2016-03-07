@@ -21,7 +21,6 @@ namespace TempSensor.Forms
         protected override void OnAppearing()
         {
             base.OnAppearing();
-            (BindingContext as DayPageViewModel).
         }
     }
 }

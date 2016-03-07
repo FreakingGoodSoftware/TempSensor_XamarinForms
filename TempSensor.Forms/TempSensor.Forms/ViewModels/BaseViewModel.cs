@@ -21,7 +21,9 @@ namespace TempSensor.Forms.ViewModels
         protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) { PropertyChanged(this, new PropertyChangedEventArgs(propertyName)); }
+            if (handler != null) {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
         }
     }
 }
