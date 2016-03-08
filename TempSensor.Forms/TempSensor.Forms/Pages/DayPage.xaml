@@ -27,7 +27,7 @@
       <chart:SfChart.PrimaryAxis>
         <chart:CategoryAxis LabelRotationAngle="-45">
           <chart:CategoryAxis.Title>
-            <chart:ChartAxisTitle Text="Hour"/>
+            <chart:ChartAxisTitle Text="Hour" />
           </chart:CategoryAxis.Title>
         </chart:CategoryAxis>
       </chart:SfChart.PrimaryAxis>
@@ -43,7 +43,10 @@
         <chart:StackingColumnSeries
           Label="Temp"
           Color="#FF8D00"
-          DataMarkerPosition="Center">
+          DataMarkerPosition="Center" 
+          ItemsSource="{Binding TempHistory}"
+          XBindingPath="CreatedAtString"
+          YBindingPath="Temp">
           
         </chart:StackingColumnSeries>
       </chart:SfChart.Series>

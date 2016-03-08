@@ -1,7 +1,9 @@
 ﻿using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Table;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net.Http;
@@ -22,7 +24,7 @@ namespace TempSensor.Forms.ViewModels
         string tempNow;
         string tempText;
         HttpClient client;
-       
+        ObservableCollection<HistoryEntity> tempHistory = new ObservableCollection<HistoryEntity>();
 
         public DayPageViewModel(INavigation navigation)
         {
@@ -35,19 +37,98 @@ namespace TempSensor.Forms.ViewModels
 
         public async void ShowTimeTemp()
         {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse("");
-            CloudTableClient tableClient = storageAccount.CreateCloudTableClient();
-            CloudTable table = tableClient.GetTableReference("TempHistory");
-            TableQuery<HistoryEntity> query = new TableQuery<HistoryEntity>();
-            var result = await table.ExecuteAsync(TableOperation.Retrieve<HistoryEntity>("", ""));
-            foreach (HistoryEntity entity in result.Result)
+            TempHistory.Clear();
+            CloudTable table = App.tableClient.GetTableReference("TempHistory");
+
+            var date = DateTime.Now;
+            var dateOffset = new DateTimeOffset(date.Year, date.Month, date.Day, SelectedTime.Hours, SelectedTime.Minutes, SelectedTime.Seconds, TimeZoneInfo.Local.BaseUtcOffset.Subtract(TimeSpan.FromHours(1)));
+            TableQuery<HistoryEntity> query = new TableQuery<HistoryEntity>()
+                .Where(TableQuery.CombineFilters(
+                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "KeozPi"),
+                    TableOperators.And,
+                    TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThan, dateOffset),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.LessThan, dateOffset.AddMinutes(11))
+                        )
+                    )
+                );
+            TableQuerySegment<HistoryEntity> querySegment = null;
+
+            while (querySegment == null || querySegment.ContinuationToken != null)
             {
+                querySegment = await table.ExecuteQuerySegmentedAsync(query, querySegment != null ? querySegment.ContinuationToken : null);
+                foreach (var item in querySegment)
+                {
+                    item.CreatedAtString = item.Timestamp.ToLocalTime().Subtract(TimeSpan.FromHours(1)).ToString("t");
+                    TempHistory.Add(item);
+                }
             }
-                TempText = String.Format("Temperature at {0}", SelectedTime.ToString(@"hh\:mm"));
+
+            if (TempHistory.Count > 0)
+            {
+                double sum = 0;
+                foreach (HistoryEntity entity in TempHistory)
+                {
+                    sum += double.Parse(entity.Temp);
+                }
+                sum = sum / TempHistory.Count;
+                TempNow = String.Format("{0} °C", sum.ToString("##.#"));
+            }
+            else
+            {
+                TempNow = "Not enough data";
+            }
+            TempText = String.Format("Temperature at {0}", SelectedTime.ToString(@"hh\:mm"));
+           
         }
 
-        public void ShowAverage()
+        public async void ShowAverage()
         {
+            TempHistory.Clear();
+
+            CloudTable table = App.tableClient.GetTableReference("TempHistory");
+
+            var date = DateTime.Now;
+            var dateOffset = new DateTimeOffset(date.Year, date.Month, date.Day, 0, 0, 0, TimeZoneInfo.Local.BaseUtcOffset.Subtract(TimeSpan.FromHours(1)));
+            TableQuery<HistoryEntity> query = new TableQuery<HistoryEntity>()
+                .Where(TableQuery.CombineFilters(
+                    TableQuery.GenerateFilterCondition("PartitionKey", QueryComparisons.Equal, "KeozPi"),
+                    TableOperators.And,
+                    TableQuery.CombineFilters(
+                        TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.GreaterThan, dateOffset),
+                        TableOperators.And,
+                        TableQuery.GenerateFilterConditionForDate("Timestamp", QueryComparisons.LessThan, dateOffset.AddHours(24))
+                        )
+                    )
+                );
+            TableQuerySegment<HistoryEntity> querySegment = null;
+
+            while (querySegment == null || querySegment.ContinuationToken != null)
+            {
+                querySegment = await table.ExecuteQuerySegmentedAsync(query, querySegment != null ? querySegment.ContinuationToken : null);
+                foreach (var item in querySegment)
+                {
+                    item.CreatedAtString = item.Timestamp.ToLocalTime().Subtract(TimeSpan.FromHours(1)).ToString("t");
+                    TempHistory.Add(item);
+                }
+            }
+
+            if (TempHistory.Count > 0)
+            {
+                double sum = 0;
+                foreach (HistoryEntity entity in TempHistory)
+                {
+                    sum += double.Parse(entity.Temp);
+                }
+                sum = sum / TempHistory.Count;
+                TempNow = String.Format("{0} °C", sum.ToString("##.#"));
+            }
+            else
+            {
+                TempNow = "Not enough data";
+            }
+
             TempText = "Average today";
         }
 
@@ -95,6 +176,19 @@ namespace TempSensor.Forms.ViewModels
             set
             {
                 SetProperty(ref tempText, value);
+            }
+        }
+
+        public ObservableCollection<HistoryEntity> TempHistory
+        {
+            get
+            {
+                return tempHistory;
+            }
+
+            set
+            {
+                SetProperty(ref tempHistory, value);
             }
         }
     }

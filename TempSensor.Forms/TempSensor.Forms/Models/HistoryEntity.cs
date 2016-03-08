@@ -9,5 +9,11 @@ namespace TempSensor.Forms.Models
 {
     public class HistoryEntity : TableEntity
     {
+        public DateTime CreatedAt { get; set; }
+
+        public string Temp { get; set; }
+
+        public string CreatedAtString { get; set; }
+
     }
 }
