@@ -1,9 +1,15 @@
 ﻿{
   "dependencies": {
+    "Birdie.MvvmCross.Plugins.UserInteraction": "1.2.0",
     "Microsoft.ApplicationInsights": "1.0.0",
     "Microsoft.ApplicationInsights.PersistenceChannel": "1.0.0",
     "Microsoft.ApplicationInsights.WindowsApps": "1.0.0",
-    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0"
+    "Microsoft.NETCore.UniversalWindowsPlatform": "5.0.0",
+    "MvvmCross": "4.0.0",
+    "MvvmCross.Plugin.Color": "4.0.0",
+    "MvvmCross.Plugin.File": "4.0.0",
+    "MvvmCross.Plugin.JsonLocalization": "4.0.0",
+    "MvvmCross.Plugin.Visibility": "4.0.0"
   },
   "frameworks": {
     "uap10.0": {}
