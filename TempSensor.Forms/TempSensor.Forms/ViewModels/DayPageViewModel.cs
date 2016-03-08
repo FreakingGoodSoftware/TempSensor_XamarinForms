@@ -23,7 +23,6 @@ namespace TempSensor.Forms.ViewModels
         TimeSpan selectedTime;
         string tempNow;
         string tempText;
-        HttpClient client;
         ObservableCollection<HistoryEntity> tempHistory = new ObservableCollection<HistoryEntity>();
 
         public DayPageViewModel(INavigation navigation)
@@ -32,7 +31,6 @@ namespace TempSensor.Forms.ViewModels
             ShowAverage();
             FilterCommand = new Command(execute: ShowFilter);
             SelectedTime = DateTime.Now.TimeOfDay;
-            client = new HttpClient(new ModernHttpClient.NativeMessageHandler());
         }
 
         public async void ShowTimeTemp()

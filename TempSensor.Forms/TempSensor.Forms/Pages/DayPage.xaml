@@ -23,7 +23,7 @@
       <Label Text="{Binding TempText}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="15"/>
       <Label Text="{Binding TempNow}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="18"/>
     </StackLayout>
-    <chart:SfChart x:Name="Chart" Grid.Row="2">
+    <chart:SfChart x:Name="Chart" Grid.Row="2" VerticalOptions="Center">
       <chart:SfChart.PrimaryAxis>
         <chart:CategoryAxis LabelRotationAngle="-45">
           <chart:CategoryAxis.Title>

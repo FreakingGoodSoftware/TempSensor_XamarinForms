@@ -1,13 +1,56 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="TempSensor.Forms.AllPage" Title="All">
-  <Grid>
+             x:Class="TempSensor.Forms.AllPage" 
+             xmlns:chart="clr-namespace:Syncfusion.SfChart.XForms;assembly=Syncfusion.SfChart.XForms"
+             xmlns:vm="clr-namespace:TempSensor.Forms.ViewModels;assembly=TempSensor.Forms" Title="All">
+  <ContentPage.Padding>
+    <OnPlatform x:TypeArguments="Thickness"
+                    iOS="0, 20, 0, 0" />
+  </ContentPage.Padding>
+  <!--<ContentPage.ToolbarItems>
+    <ToolbarItem Text="Time filter" Command="{Binding FilterCommand}"></ToolbarItem>
+  </ContentPage.ToolbarItems>
+  <Grid Padding="0,10,0,0">
     <Grid.RowDefinitions>
-      <RowDefinition/>
-      <RowDefinition/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition />
     </Grid.RowDefinitions>
-    <Label Text="All days" VerticalOptions="Center" HorizontalOptions="Center" />
-    <DatePicker Grid.Row="1"/>
-  </Grid>
+    <Label Text="This day" VerticalOptions="Center" HorizontalOptions="Center" FontSize="22"/>
+    <StackLayout Grid.Row="1" Padding="5">
+      <Label Text="{Binding TempText}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="15"/>
+      <Label Text="{Binding TempNow}" VerticalOptions="Center" HorizontalOptions="Center" FontSize="18"/>
+    </StackLayout>
+    <chart:SfChart x:Name="Chart" Grid.Row="2" VerticalOptions="Center">
+      <chart:SfChart.PrimaryAxis>
+        <chart:CategoryAxis LabelRotationAngle="-45">
+          <chart:CategoryAxis.Title>
+            <chart:ChartAxisTitle Text="Hour" />
+          </chart:CategoryAxis.Title>
+        </chart:CategoryAxis>
+      </chart:SfChart.PrimaryAxis>
+      <chart:SfChart.SecondaryAxis>
+        <chart:NumericalAxis>
+          <chart:NumericalAxis.Title>
+            <chart:ChartAxisTitle Text="°C"/>
+          </chart:NumericalAxis.Title>
+        </chart:NumericalAxis>
+      </chart:SfChart.SecondaryAxis>
+
+      <chart:SfChart.Series>
+        <chart:StackingColumnSeries
+          Label="Temp"
+          Color="#FF8D00"
+          DataMarkerPosition="Center"
+          ItemsSource="{Binding TempHistory}"
+          XBindingPath="CreatedAtString"
+          YBindingPath="Temp">
+
+        </chart:StackingColumnSeries>
+      </chart:SfChart.Series>
+
+    </chart:SfChart>
+  </Grid>-->
+
 </ContentPage>
